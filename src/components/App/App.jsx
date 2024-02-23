@@ -43,32 +43,14 @@ export default function App() {
     });
   };
 
-  // Зчитування контактів та фільтру з локального сховища після монтажу компонента
-  useEffect(() => {
-    const storedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
-    const storedFilter = JSON.parse(localStorage.getItem('filter')) || '';
-    setContacts(storedContacts);
-    setFilter(storedFilter);
-  }, []); // Порожній масив - ефект буде викликано після монтажу компонента
-
-  // Збереження контактів та фільтра у локальному сховищі при зміні станів
+  // Збереження контактів у локальному сховищі при зміні станів
   useEffect(() => {
     try {
       localStorage.setItem('contacts', JSON.stringify(contacts));
-      localStorage.setItem('filter', JSON.stringify(filter));
     } catch (error) {
       console.error('Error storing contacts or filter in localStorage:', error);
     }
-  }, [contacts, filter]);
-
-  // Збереження відфільтрованих контактів у локальному сховищі при зміні стану
-  useEffect(() => {
-    try {
-      localStorage.setItem('contacts', JSON.stringify(filteredContacts));
-    } catch (error) {
-      console.error('Error storing contacts in localStorage:', error);
-    }
-  }, [filteredContacts]);
+  }, [contacts]);
 
   return (
     <div className={css.container}>
