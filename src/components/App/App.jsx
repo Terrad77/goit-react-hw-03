@@ -4,8 +4,8 @@ import ContactForm from '../ContactForm/ContactForm';
 import ContactList from '../ContactList/ContactList';
 import SearchBox from '../SearchBox/SearchBox';
 
-// початкове значення стану App
-const initialValues = [
+// масив об'єктів початкового значення стану App
+const initialContacts = [
   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
   { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
   { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
@@ -13,26 +13,55 @@ const initialValues = [
 ];
 
 //ф-ція що зчитує значення localStorage за ключем
-// const getInitialFeedback = () => {
-//   const storedContact = window.localStorage.getItem('contact');
-//   return storedContact !== null ? JSON.parse(storedContact) : initialValues;
-// };
+const getInitialContacts = () => {
+  const savedContacts = window.localStorage.getItem('contact');
+  return savedContacts !== null ? JSON.parse(savedContacts) : initialContacts;
+};
+console.log(getInitialContacts()); // == initialContacts
 
-const App = () => {
-  // зміна значення початкового стану
-  // const [value, setValue] = useState(initialValues);
-  const [contacts, setContacts] = useState(initialValues);
-  //початкове значення стану фільтра пошуку SearchBox слід зберігати в компоненті App
-  const [filter, setFilter] = useState('');
-  //ф-ція зміни стану фільтра пошуку що передається як пропс до SearchBox
-  const handleFilterChange = newFilter => {
-    setFilter(newFilter);
-  };
-  //фільтрація масиву контактів в компоненті App, масив відфільтрованих контактів передається як пропс до ContactList, ф - ція фільтрації контактів (нечутлива до регістру),
+export default function App() {
+  const [contacts, setContacts] = useState(getInitialContacts()); // початковий стан контактів
+  const [filter, setFilter] = useState(''); // початковий стан фільтра пошуку SearchBox
+
+  // змінна де зберігаємо відфільтровані контакти не записуючи в стан, пропс до ContactList
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(filter.toLowerCase())
   );
 
+  // для колекції елементів використовують функціональну форму сеттеру!
+  // ф-ція повертає змінений стану контактів (додавання)
+  const addContact = newContact => {
+    setContacts(prevContacts => {
+      return [...prevContacts, newContact];
+    });
+  };
+
+  // ф-ція повертає змінений стану контактів (видалення), функціональна форма сеттеру
+  const deleteContact = contactId => {
+    setContacts(prevContacts => {
+      return prevContacts.filter(contact => contact.id !== contactId);
+    });
+  };
+
+  // Зчитування контактів та фільтру з локального сховища після монтажу компонента
+  useEffect(() => {
+    const storedContacts = JSON.parse(localStorage.getItem('contacts')) || [];
+    const storedFilter = JSON.parse(localStorage.getItem('filter')) || '';
+    setContacts(storedContacts);
+    setFilter(storedFilter);
+  }, []); // Порожній масив - ефект буде викликано після монтажу компонента
+
+  // Збереження контактів та фільтра у локальному сховищі при зміні станів
+  useEffect(() => {
+    try {
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+      localStorage.setItem('filter', JSON.stringify(filter));
+    } catch (error) {
+      console.error('Error storing contacts or filter in localStorage:', error);
+    }
+  }, [contacts, filter]);
+
+  // Збереження відфільтрованих контактів у локальному сховищі при зміні стану
   useEffect(() => {
     try {
       localStorage.setItem('contacts', JSON.stringify(filteredContacts));
@@ -41,35 +70,12 @@ const App = () => {
     }
   }, [filteredContacts]);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('filter', JSON.stringify(filter));
-    } catch (error) {
-      console.error('Error storing filter in localStorage:', error);
-    }
-  }, [filter]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('contacts', JSON.stringify(contacts));
-    } catch (error) {
-      console.error('Error storing contacts in localStorage:', error);
-    }
-  }, [contacts]);
-
-  //ф-ція дадавання нового контакту до стану
-  const onAddContact = newContact => {
-    setContacts(prevContacts => [...prevContacts, newContact]);
-  };
-
   return (
     <div className={css.container}>
       <h1>Phonebook</h1>
-      <ContactForm onAddContact={onAddContact} />
-      <SearchBox value={filter} onChange={handleFilterChange} />
-      <ContactList contacts={filteredContacts} />
+      <ContactForm onAdd={addContact} />
+      <SearchBox value={filter} onChange={setFilter} />
+      <ContactList contacts={filteredContacts} onDelete={deleteContact} />
     </div>
   );
-};
-
-export default App;
+}

@@ -1,7 +1,8 @@
 import css from './SearchBox.module.css';
 import { useId } from 'react';
 
-//Поле пошуку – це інпут без форми, значення якого записується у стан контрольований елемент
+//Поле пошуку – це інпут без форми, значення якого записується у стан контрольований елемент,
+//передаємо value - значення стану, onChange - сеттер
 export default function SearchBox({ value, onChange }) {
   const nameFieldId = useId();
   return (

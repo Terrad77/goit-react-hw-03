@@ -21,7 +21,7 @@ const ContactFormSchema = Yup.object().shape({
     .required('Required'),
 });
 
-export default function ContactForm({ onAddContact }) {
+export default function ContactForm({ onAdd }) {
   const nameFieldId = useId();
   const numberFieldId = useId();
 
@@ -38,12 +38,12 @@ export default function ContactForm({ onAddContact }) {
           name: values.name,
           number: values.number,
         };
-        onAddContact(newContact);
+        onAdd(newContact);
         resetForm();
       }}
       validationSchema={ContactFormSchema} // схема валидации
-      validationOnBlur={false} //валидация не произойдет при выходе из поля
-      validateOnChange={false} //валидация не произойдет при каждом изменении значений
+      validationOnBlur={false} // нет валидации при выходе из поля
+      validateOnChange={false} // нет валидации при каждом изменении значений
     >
       <Form className={css.form}>
         <label htmlFor={nameFieldId}>Name</label>
