@@ -14,13 +14,13 @@ const initialContacts = [
 
 //ф-ція що зчитує значення localStorage за ключем
 const getInitialContacts = () => {
-  const savedContacts = window.localStorage.getItem('contact');
+  const savedContacts = window.localStorage.getItem('contacts');
   return savedContacts !== null ? JSON.parse(savedContacts) : initialContacts;
 };
 console.log(getInitialContacts()); // == initialContacts
 
 export default function App() {
-  const [contacts, setContacts] = useState(getInitialContacts()); // початковий стан контактів
+  const [contacts, setContacts] = useState(getInitialContacts); // початковий стан контактів
   const [filter, setFilter] = useState(''); // початковий стан фільтра пошуку SearchBox
 
   // змінна де зберігаємо відфільтровані контакти не записуючи в стан, пропс до ContactList
