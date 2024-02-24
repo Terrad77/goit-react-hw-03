@@ -1,23 +1,15 @@
 import css from './App.module.css';
+import initialContacts from '../../data/initialContacts.json';
 import { useState, useEffect } from 'react';
 import ContactForm from '../ContactForm/ContactForm';
 import ContactList from '../ContactList/ContactList';
 import SearchBox from '../SearchBox/SearchBox';
 
-// масив об'єктів початкового значення стану App
-const initialContacts = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-];
-
-//ф-ція що зчитує значення localStorage за ключем
+//ф-ція що зчитує значення localStorage
 const getInitialContacts = () => {
   const savedContacts = window.localStorage.getItem('contacts');
   return savedContacts !== null ? JSON.parse(savedContacts) : initialContacts;
 };
-console.log(getInitialContacts()); // == initialContacts
 
 export default function App() {
   const [contacts, setContacts] = useState(getInitialContacts); // початковий стан контактів
@@ -36,7 +28,7 @@ export default function App() {
     });
   };
 
-  // ф-ція повертає змінений стану контактів (видалення), функціональна форма сеттеру
+  // ф-ція повертає змінений стану контактів (видалення)
   const deleteContact = contactId => {
     setContacts(prevContacts => {
       return prevContacts.filter(contact => contact.id !== contactId);
