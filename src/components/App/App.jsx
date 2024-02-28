@@ -8,10 +8,12 @@ import SearchBox from '../SearchBox/SearchBox';
 //ф-ція що зчитує значення localStorage
 const getInitialContacts = () => {
   const savedContacts = window.localStorage.getItem('contacts');
+  // если (savedContacts есть)getItem не вернет ноль, то истина: JSON.parse() для преобразования JSON  в объект, если ложь:
   return savedContacts !== null ? JSON.parse(savedContacts) : initialContacts;
 };
 
 export default function App() {
+  //Оголошуємо стани
   const [contacts, setContacts] = useState(getInitialContacts); // початковий стан контактів
   const [filter, setFilter] = useState(''); // початковий стан фільтра пошуку SearchBox
 
